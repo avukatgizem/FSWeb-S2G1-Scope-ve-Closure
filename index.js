@@ -10,7 +10,7 @@
  *  1. Stringlerden oluşan bir array'i parametre olarak alın
  *  2. Bir string'i değişken olarak alan bir callback fonksiyonunu parametre olarak alın 
  *  3. Array'in İLK elemanını değişken olarak alarak çalışacak olan callback fonksiyonunun sonucunu dönün
- * 
+ *  
  * Aşağıdaki kodlar bu görevin nasıl yapılacağına örnek olacaktır
  * Bu fonskiyon 'asas' dönmeli(return)
 */
@@ -30,11 +30,13 @@ console.log('örnek görev:', ilkiniDon(['as','sa'],function(metin){return metin
   Aşağıdaki skor1 ve skor2 kodlarını inceleyiniz ve aşağıdaki soruları altına not alarak cevaplayın
   
   1. skor1 ve skor2 arasındaki fark nedir?
-  
+  cevap: skor1'e sadece skorGuncelle() fonksiyonun içinde ulaşılır. Fonksiyonun dışında kullanılamaz; skor2'ye ise kodun herhangi bir yerinden erişilebilir ve ulaşılabilir.
   2. Hangisi bir closure kullanmaktadır? Nasıl tarif edebilirsin? (yarınki derste öğreneceksin :) )
-  
+  cevap:skor1 bir closure kullanır. Closure, bir iç fonksiyonun, dışarıda tanımlanmış bir değişkene veya fonksiyona erişmesini sağlayan bir yapıdır. Bu durumda skorArtirici fonksiyonu içinde tanımlanan skor değişkeni, skorGuncelle fonksiyonu tarafından kullanılabilir. Bu nedenle, skor1 bir closure kullanır.
   3. Hangi durumda skor1 tercih edilebilir? Hangi durumda skor2 daha mantıklıdır?
-*/
+  cevap:skor1, yalnızca belirli bir işlev aracılığıyla ulaşılabilen ve değiştirilebilen özel bir değişkeni korumamız gerektiğinde tercih edilir. Skor2, birden fazla fonksiyondan ulaşılabilen global bir değişkene ihtiyaç olduğunda kullanılır.
+
+  */
 
 // skor1 kodları
 function skorArtirici() {
@@ -51,7 +53,9 @@ let skor = 0;
 
 function skor2() {
   return skor++;
-}
+} 
+
+
 
 
 /* Görev 2: takimSkoru() 
@@ -64,12 +68,13 @@ Aşağıdaki takimSkoru() fonksiyonununda aşağıdakileri yapınız:
 Not: Bu fonskiyon, aşağıdaki diğer görevler için de bir callback fonksiyonu olarak da kullanılacak
 */
 
-function takimSkoru(/*Kodunuzu buraya yazınız*/){
-    /*Kodunuzu buraya yazınız*/
+function takimSkoru(){
+  const minSkor = 10;
+  const maxSkor = 25;
+  return Math.floor(Math.random() * maxSkor -minSkor + 1) + minSkor;
 }
-
-
-
+  console.log (takimSkoru());
+    
 
 /* Görev 3: macSonucu() 
 Aşağıdaki macSonucu() fonksiyonununda aşağıdakileri yapınız:
@@ -86,12 +91,30 @@ Aşağıdaki macSonucu() fonksiyonununda aşağıdakileri yapınız:
 }
 */ 
 
-function macSonucu(/*Kodunuzu buraya yazınız*/){
-  /*Kodunuzu buraya yazınız*/
-}
+function macSonucu(skor,no){
+  
 
-
-
+  let evsahibiSkor = 0;
+  let konukSkor = 0;
+  for(let i=0;i<no;i++){
+  
+  evsahibiSkor=evsahibiSkor + skor();
+  }
+  
+  for(let i=0;i<no;i++){
+  
+    konukSkor=konukSkor + skor(); 
+    }
+  
+  const obje ={
+  "EvSahibi" : evsahibiSkor,
+  "KonukTakim" : konukSkor,
+  
+  };
+  
+  return obje;
+  }
+ console.log(macSonucu(takimSkoru,4));
 
 
 
@@ -107,13 +130,16 @@ Aşağıdaki periyotSkoru() fonksiyonununda aşağıdakileri yapınız:
   "KonukTakim": 12
 }
   */
+function periyotSkoru(SkorPeriyot) {
 
-
-function periyotSkoru(/*Kodunuzu buraya yazınız*/) {
-  /*Kodunuzu buraya yazınız*/
-
-}
-
+  const obje = {
+    "EvSahibi": SkorPeriyot(),
+    "KonukTakim": SkorPeriyot(),
+  }
+  return obje;
+  
+  }
+  console.log(periyotSkoru(takimSkoru))
 
 /* Zorlayıcı Görev 5: skorTabelasi() 
 Aşağıdaki skorTabelasi() fonksiyonunu kullanarak aşağıdakileri yapınız:
@@ -146,10 +172,41 @@ MAÇ UZAR ise skorTabelasi(periyotSkoru,takimSkoru,4)
 ] */
 // NOTE: Bununla ilgili bir test yoktur. Eğer logladığınız sonuçlar yukarıdakine benziyor ise tmamlandı sayabilirsiniz.
 
-function skorTabelasi(/*Kodunuzu buraya yazınız*/) {
-  /*Kodunuzu buraya yazınız*/
+function skorTabelasi(periyotSkoruP, takimSkoruP, skorP) {
+  
+  const scoreArray = [];
+
+  let teamScores = {
+    EvSahibi: 0,
+    KonukTakim: 0,
+  };
+  for (let i = 1; i <= skorP; i++) {
+    const periodScoreResult = periyotSkoruP(takimSkoruP);
+    const hSc = periodScoreResult.EvSahibi;
+    const gSc = periodScoreResult.KonukTakim;
+    teamScores.EvSahibi = teamScores.EvSahibi + hSc;
+    teamScores.KonukTakim = teamScores.KonukTakim + gSc;
+    const scoreBacktick = `${i}. Periyot: Ev Sahibi ${hSc} - Konuk Takım ${gSc}`;
+    scoreArray.push(scoreBacktick);
+    // eğer son skorPda isek ve skorlar aynıysa
+    if (skorP == i && teamScores.EvSahibi == teamScores.KonukTakim) {
+      const periodScoreResultE = periyotSkoruP(takimSkoruP);
+      const hScE = periodScoreResult.EvSahibi;
+      const gScE = periodScoreResult.KonukTakim;
+      teamScores.EvSahibi = teamScores.EvSahibi + hScE;
+      teamScores.KonukTakim = teamScores.KonukTakim + gScE;
+      scoreArray.push(`1. Uzatma: Ev Sahibi ${hScE} - Konuk Takım ${gScE}`);
+    }
+  }
+
+  scoreArray.push(
+    `Maç Sonucu: Ev Sahibi ${teamScores.EvSahibi} - Konuk Takım ${teamScores.KonukTakim}`
+  );
+
+  return [...scoreArray];
 }
 
+console.log("Görev 5", skorTabelasi(periyotSkoru, takimSkoru, 4));
 
 
 
